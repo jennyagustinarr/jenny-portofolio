@@ -256,3 +256,36 @@ button, a { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+
+/* Mobile navigation reliability patch (v4.1)
+   Explicit visibility rules avoid depending on Tailwind's hidden/flex utilities. */
+#mobile-toggle {
+  position: relative; z-index: 202; flex: 0 0 44px; cursor: pointer;
+  pointer-events: auto; -webkit-appearance: none; appearance: none;
+}
+#mobile-menu { pointer-events: auto; }
+@media (max-width: 767px) {
+  header.sticky { isolation: isolate; }
+  header.sticky > div { position: relative; }
+  #mobile-menu, #mobile-menu.hidden {
+    display: none !important; visibility: hidden; pointer-events: none;
+  }
+  #mobile-menu.is-open {
+    display: flex !important; visibility: visible; pointer-events: auto;
+    position: absolute; top: calc(100% + 8px); left: 14px; right: 14px;
+    z-index: 201; max-height: min(70vh, 420px); overflow-y: auto;
+    overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  }
+  #mobile-menu.is-open a {
+    position: relative; z-index: 1; min-height: 48px; width: 100%;
+    pointer-events: auto; touch-action: manipulation;
+  }
+  #mobile-toggle { touch-action: manipulation; }
+}
+@media (min-width: 768px) {
+  #mobile-toggle { display: none !important; }
+  #mobile-menu, #mobile-menu.hidden {
+    display: flex !important; visibility: visible; pointer-events: auto; position: static;
+  }
+}

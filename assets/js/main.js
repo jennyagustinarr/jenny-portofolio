@@ -1,32 +1,47 @@
 document.addEventListener("DOMContentLoaded", () => {
   const menuButton = document.querySelector("#mobile-toggle");
   const mobileMenu = document.querySelector("#mobile-menu");
-  const closeMenu = () => {
+  const isMobileViewport = () => window.matchMedia("(max-width: 767px)").matches;
+
+  const setMenuOpen = (open) => {
     if (!menuButton || !mobileMenu) return;
-    mobileMenu.classList.add("hidden");
-    mobileMenu.classList.remove("flex");
-    menuButton.setAttribute("aria-expanded", "false");
-    menuButton.setAttribute("aria-label", "Open navigation menu");
+    const shouldOpen = Boolean(open && isMobileViewport());
+    mobileMenu.classList.toggle("is-open", shouldOpen);
+    // Keep legacy utility classes in sync, but visibility is controlled by is-open CSS.
+    mobileMenu.classList.toggle("hidden", !shouldOpen);
+    mobileMenu.classList.toggle("flex", shouldOpen);
+    menuButton.setAttribute("aria-expanded", String(shouldOpen));
+    menuButton.setAttribute("aria-label", shouldOpen ? "Close navigation menu" : "Open navigation menu");
   };
 
   if (menuButton && mobileMenu) {
+    menuButton.type = "button";
     menuButton.setAttribute("aria-expanded", "false");
     menuButton.setAttribute("aria-controls", "mobile-menu");
     menuButton.setAttribute("aria-label", "Open navigation menu");
-    menuButton.addEventListener("click", () => {
+
+    menuButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       const isOpen = menuButton.getAttribute("aria-expanded") === "true";
-      mobileMenu.classList.toggle("hidden", isOpen);
-      mobileMenu.classList.toggle("flex", !isOpen);
-      menuButton.setAttribute("aria-expanded", String(!isOpen));
-      menuButton.setAttribute("aria-label", isOpen ? "Open navigation menu" : "Close navigation menu");
+      setMenuOpen(!isOpen);
     });
-    mobileMenu.querySelectorAll("a").forEach(link => link.addEventListener("click", closeMenu));
-    document.addEventListener("click", event => {
+
+    mobileMenu.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => setMenuOpen(false));
+    });
+
+    document.addEventListener("click", (event) => {
       if (menuButton.getAttribute("aria-expanded") === "true" &&
-          !mobileMenu.contains(event.target) && !menuButton.contains(event.target)) closeMenu();
+          !mobileMenu.contains(event.target) && !menuButton.contains(event.target)) {
+        setMenuOpen(false);
+      }
     });
-    document.addEventListener("keydown", event => { if (event.key === "Escape") closeMenu(); });
-    window.addEventListener("resize", () => { if (window.innerWidth >= 768) closeMenu(); });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") setMenuOpen(false);
+    });
+    window.addEventListener("resize", () => setMenuOpen(false));
+    window.addEventListener("orientationchange", () => setMenuOpen(false));
   }
 
   // Mark the current page in the navigation for clearer orientation.
