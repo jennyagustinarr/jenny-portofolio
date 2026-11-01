@@ -574,3 +574,38 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 #mobile-toggle[hidden] { display: none !important; }
+
+/* Final interaction fixes: native hidden state must always win over old menu rules. */
+#mobile-menu[hidden] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+#mobile-menu:not([hidden]) {
+  visibility: visible;
+  pointer-events: auto;
+}
+#mobile-toggle { position: relative; z-index: 1003; cursor: pointer; }
+@media (max-width: 767px) {
+  #mobile-menu:not([hidden]) { display: flex !important; }
+  #mobile-menu a { position: relative; z-index: 1; cursor: pointer; }
+}
+
+/* Complete dark palette for elements that previously retained light surfaces. */
+:root.dark {
+  color-scheme: dark;
+  --page: #101a17; --surface: #1b2b25; --ink: #edf7f1;
+  --muted: #b1c3b8; --line: #3a5549; --mint: #203d30; --forest: #91d5b1;
+}
+:root.dark body, :root.dark body.bg-paper { color: var(--ink) !important; }
+:root.dark header.sticky, :root.dark footer, :root.dark .theme-toggle { color: var(--ink); }
+:root.dark .bg-white, :root.dark .project-card, :root.dark .publication-card,
+:root.dark .contact-card, :root.dark main article.bg-white,
+:root.dark main section.bg-white { color: var(--ink) !important; }
+:root.dark .text-slate-800, :root.dark .text-slate-900,
+:root.dark .text-gray-800, :root.dark .text-gray-900 { color: #edf7f1 !important; }
+:root.dark .text-slate-700, :root.dark .text-slate-600,
+:root.dark .text-gray-700, :root.dark .text-gray-600 { color: #c5d4cb !important; }
+:root.dark #mobile-menu:not([hidden]) { background: #192722 !important; border-color: var(--line) !important; }
+:root.dark #mobile-menu .nav-link { color: #d6e7dc !important; }
+:root.dark #mobile-menu .nav-link[aria-current="page"] { color: #a5e3c2 !important; background: #254536 !important; }

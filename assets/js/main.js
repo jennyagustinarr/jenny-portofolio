@@ -19,6 +19,7 @@
         mobileMenu.hidden = false;
         menuButton.hidden = true;
       }
+      menuButton.textContent = "☰";
       menuButton.setAttribute("aria-expanded", "false");
       menuButton.setAttribute("aria-label", "Open navigation menu");
     };
@@ -87,6 +88,7 @@
       const isDark = theme === "dark";
       document.documentElement.classList.toggle("dark", isDark);
       document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+      document.documentElement.dataset.theme = theme;
       if (themeIcon) themeIcon.textContent = isDark ? "☀" : "☾";
       if (themeLabel) themeLabel.textContent = isDark ? "Light mode" : "Dark mode";
       if (themeButton) {
