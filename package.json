@@ -1,0 +1,8 @@
+{
+  "name": "jenny-agustina-rahman-portfolio",
+  "private": true,
+  "version": "1.1.0",
+  "type": "module",
+  "scripts": { "dev": "vite", "build": "vite build", "preview": "vite preview" },
+  "devDependencies": { "vite": "^6.0.0" }
+}

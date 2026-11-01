@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Portfolio Jenny Agustina Rahman — Information Systems student, data analytics, data science, web development, machine learning, and information retrieval.">
+<title>Jenny Agustina Rahman — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{ink:'#17231f',forest:'#1d5945',mint:'#dff4e9',paper:'#f7faf8',line:'#dce8e1'},fontFamily:{sans:['DM Sans','sans-serif'],display:['Manrope','sans-serif']}}}}</script>
+<link rel="stylesheet" href="assets/css/style.css"></head>
+<body class="bg-paper text-ink font-sans antialiased">
+<header class="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
+ <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
+  <a href="index.html" class="font-display font-extrabold tracking-tight text-lg sm:text-xl text-forest whitespace-nowrap">Jenny's Portfolio</a>
+  <button id="mobile-toggle" class="md:hidden border border-line rounded-lg px-3 py-2" aria-label="Toggle Navigation Menu">Menu</button>
+  <nav id="mobile-menu" class="hidden md:flex flex-col md:flex-row gap-5 text-sm font-semibold">
+   <a href="index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About Me</a><a href="projects.html" class="nav-link">Projects</a><a href="achievements.html" class="nav-link">Achievements</a><a href="contact.html" class="nav-link">Contact</a>
+  </nav>
+  <div class="flex items-center gap-2">
+   <button id="theme-toggle" type="button" class="theme-toggle rounded-full border border-line bg-white px-3 py-2 text-sm font-semibold" aria-label="Switch to dark mode" title="Switch theme"><span id="theme-icon">☾</span><span class="hidden sm:inline ml-1" id="theme-label">Dark mode</span></button>
+   <a href="contact.html" class="hidden sm:inline-flex rounded-full bg-forest text-white px-4 py-2 text-sm font-semibold hover:opacity-90">Let’s connect ↗</a>
+  </div>
+ </div>
+</header>
+<main>
+<section class="max-w-6xl mx-auto px-5 pt-20 pb-16 md:pt-28 md:pb-24">
+ <div class="max-w-4xl">
+  <p class="inline-flex items-center gap-2 rounded-full bg-mint px-4 py-2 text-sm font-semibold text-forest mb-7"><span class="w-2 h-2 rounded-full bg-forest"></span> Information Systems · Institut Teknologi PLN</p>
+  <h1 class="font-display text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.08]">Hello, I’m Jenny Agustina Rahman<span class="text-forest">.</span></h1>
+  <p class="mt-7 text-xl md:text-2xl leading-relaxed text-slate-600 max-w-3xl">I explore how data, intelligent systems, and thoughtful digital products can solve real-world problems.</p>
+  <p class="mt-5 text-base md:text-lg leading-relaxed text-slate-600 max-w-3xl">An Information Systems student with a strong interest in Data Analytics and Data Science. My experience spans information retrieval laboratory instruction, data management, web development, machine learning projects, and student-led sustainability initiatives.</p>
+  <div class="mt-9 flex flex-wrap gap-3"><a href="projects.html" class="rounded-full bg-forest text-white px-6 py-3 font-semibold">Explore my projects ↗</a><a href="assets/docs/Jenny_Agustina_Rahman_CV.pdf" target="_blank" class="rounded-full border border-line bg-white px-6 py-3 font-semibold">View CV ↓</a></div>
+ </div>
+ <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-16">
+  <div class="rounded-2xl bg-white border border-line p-5"><p class="text-3xl font-display font-extrabold text-forest">3.90</p><p class="text-sm text-slate-500 mt-1">GPA / 4.00</p></div>
+  <div class="rounded-2xl bg-white border border-line p-5"><p class="text-3xl font-display font-extrabold text-forest">9</p><p class="text-sm text-slate-500 mt-1">Featured projects</p></div>
+  <div class="rounded-2xl bg-white border border-line p-5"><p class="text-3xl font-display font-extrabold text-forest">500+</p><p class="text-sm text-slate-500 mt-1">Festival participants</p></div>
+  <div class="rounded-2xl bg-white border border-line p-5"><p class="text-3xl font-display font-extrabold text-forest">20% / 15%</p><p class="text-sm text-slate-500 mt-1">Data process improvement*</p></div>
+ </div>
+ <p class="text-xs text-slate-400 mt-3">*Reported outcomes from data management initiatives during the Ministry of Home Affairs internship.</p>
+</section>
+<section class="bg-white border-y border-line"><div class="max-w-6xl mx-auto px-5 py-16">
+ <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-9"><div><p class="text-sm uppercase tracking-[.2em] text-forest font-bold">Selected work</p><h2 class="font-display text-3xl md:text-4xl font-extrabold mt-2">Projects at the intersection of data & technology</h2></div><a class="font-semibold text-forest" href="projects.html">See all projects ↗</a></div>
+ <div class="grid md:grid-cols-3 gap-5">
+  <article class="rounded-2xl border border-line p-6"><p class="text-xs font-bold uppercase tracking-wider text-forest">IoT · Renewable Energy</p><h3 class="font-display text-xl font-bold mt-3">PLTS Monitoring & Integration</h3><p class="text-slate-600 mt-3 text-sm leading-relaxed">A monitoring system that receives panel-level data, centralizes records, and issues warnings when usage anomalies are detected.</p><a href="https://integrasiplts.vercel.app/" target="_blank" rel="noopener" class="inline-block mt-5 text-sm font-bold text-forest">Open project ↗</a></article>
+  <article class="rounded-2xl border border-line p-6"><p class="text-xs font-bold uppercase tracking-wider text-forest">Web · Next.js</p><h3 class="font-display text-xl font-bold mt-3">Green Impact Festival 2026</h3><p class="text-slate-600 mt-3 text-sm leading-relaxed">Promotional and registration website for ambassador, essay competition, and seminar activities.</p><a href="https://gif2026.vercel.app/" target="_blank" rel="noopener" class="inline-block mt-5 text-sm font-bold text-forest">Open project ↗</a></article>
+  <article class="rounded-2xl border border-line p-6"><p class="text-xs font-bold uppercase tracking-wider text-forest">Machine Learning</p><h3 class="font-display text-xl font-bold mt-3">Loan Eligibility Decision Support</h3><p class="text-slate-600 mt-3 text-sm leading-relaxed">A web-based decision support system applying Support Vector Machine (SVM) to assess loan eligibility.</p><a href="https://github.com/jennyagustinarr/approvalpinjaman" target="_blank" rel="noopener" class="inline-block mt-5 text-sm font-bold text-forest">View repository ↗</a></article>
+ </div>
+</div></section>
+<section class="max-w-6xl mx-auto px-5 py-16"><div class="grid md:grid-cols-2 gap-10 items-start"><div><p class="text-sm uppercase tracking-[.2em] text-forest font-bold">What I work with</p><h2 class="font-display text-3xl font-extrabold mt-2">Curiosity backed by practical skills.</h2><p class="text-slate-600 leading-relaxed mt-4">I enjoy turning raw information into useful insights and building digital tools that make processes clearer and more efficient.</p></div><div class="flex flex-wrap gap-2"><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Python</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Pandas</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Data Wrangling</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">EDA</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Machine Learning</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">SVM</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Random Forest</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">SQL</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Data Visualization</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">HTML</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">CSS</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">JavaScript</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Next.js</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Flutter</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Dart</span><span class="rounded-full bg-mint text-forest px-4 py-2 text-sm font-semibold">Microsoft Office</span></div></div></section>
+<section class="bg-forest text-white"><div class="max-w-6xl mx-auto px-5 py-14 flex flex-col md:flex-row md:items-center justify-between gap-6"><div><p class="text-mint text-sm font-bold uppercase tracking-widest">Let’s connect</p><h2 class="font-display text-3xl md:text-4xl font-extrabold mt-2">Have an idea worth exploring?</h2><p class="text-white/75 mt-3">I’m open to learning opportunities, collaborations, and meaningful projects.</p></div><a href="contact.html" class="rounded-full bg-white text-forest px-6 py-3 font-bold self-start">Get in touch ↗</a></div></section>
+</main><footer class="border-t border-line mt-20"><div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row justify-between gap-3 text-sm text-slate-500"><span>© <span data-current-year></span> Jenny Agustina Rahman</span><span>Built with curiosity, data, and purposeful technology.</span></div></footer><script src="assets/js/main.js"></script></body></html>
