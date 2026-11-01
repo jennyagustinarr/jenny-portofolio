@@ -1,83 +1,157 @@
 (() => {
-  'use strict';
-  const init = () => {
-    const root = document.documentElement;
-    const menuButton = document.getElementById('mobile-toggle');
-    const menu = document.getElementById('mobile-menu');
-    const themeButton = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    const themeLabel = document.getElementById('theme-label');
-    const mobile = window.matchMedia('(max-width: 767px)');
+  "use strict";
 
-    const setMenu = (open) => {
-      if (!menuButton || !menu) return;
-      const isMobile = mobile.matches;
-      menu.hidden = isMobile ? !open : false;
-      menuButton.setAttribute('aria-expanded', String(isMobile && open));
-      menuButton.setAttribute('aria-label', isMobile && open ? 'Close navigation menu' : 'Open navigation menu');
-      menuButton.querySelector('span').textContent = isMobile && open ? '×' : '☰';
+  const init = () => {
+    const menuButton = document.getElementById("mobile-toggle");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const themeButton = document.getElementById("theme-toggle");
+    const themeIcon = document.getElementById("theme-icon");
+    const themeLabel = document.getElementById("theme-label");
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
+
+    // Reliable responsive navigation: one state source (the hidden property).
+    const syncNavigation = () => {
+      const isMobile = mobileQuery.matches;
+      if (isMobile) {
+        mobileMenu.hidden = true;
+        menuButton.hidden = false;
+      } else {
+        mobileMenu.hidden = false;
+        menuButton.hidden = true;
+      }
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.setAttribute("aria-label", "Open navigation menu");
     };
-    if (menuButton && menu) {
-      menuButton.addEventListener('click', (event) => {
+
+    if (menuButton && mobileMenu) {
+      menuButton.type = "button";
+      menuButton.addEventListener("click", (event) => {
         event.preventDefault();
-        setMenu(menu.hidden);
+        event.stopPropagation();
+        const willOpen = mobileMenu.hidden;
+        mobileMenu.hidden = !willOpen;
+        menuButton.setAttribute("aria-expanded", String(willOpen));
+        menuButton.setAttribute("aria-label", willOpen ? "Close navigation menu" : "Open navigation menu");
+        menuButton.textContent = willOpen ? "×" : "☰";
       });
-      menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
-      document.addEventListener('click', event => {
-        if (mobile.matches && !menu.hidden && !menu.contains(event.target) && !menuButton.contains(event.target)) setMenu(false);
+
+      mobileMenu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          if (mobileQuery.matches) {
+            mobileMenu.hidden = true;
+            menuButton.setAttribute("aria-expanded", "false");
+            menuButton.setAttribute("aria-label", "Open navigation menu");
+            menuButton.textContent = "☰";
+          }
+        });
       });
-      document.addEventListener('keydown', event => { if (event.key === 'Escape') setMenu(false); });
-      const syncMenu = () => setMenu(false);
-      window.addEventListener('resize', syncMenu, { passive: true });
-      mobile.addEventListener?.('change', syncMenu);
-      syncMenu();
+
+      document.addEventListener("click", (event) => {
+        if (mobileQuery.matches && !mobileMenu.hidden &&
+            !mobileMenu.contains(event.target) && !menuButton.contains(event.target)) {
+          mobileMenu.hidden = true;
+          menuButton.setAttribute("aria-expanded", "false");
+          menuButton.setAttribute("aria-label", "Open navigation menu");
+          menuButton.textContent = "☰";
+        }
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && mobileQuery.matches) {
+          mobileMenu.hidden = true;
+          menuButton.setAttribute("aria-expanded", "false");
+          menuButton.setAttribute("aria-label", "Open navigation menu");
+          menuButton.textContent = "☰";
+        }
+      });
+
+      syncNavigation();
+      window.addEventListener("resize", syncNavigation, { passive: true });
+      if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", syncNavigation);
     }
 
-    const currentFile = location.pathname.split('/').pop() || 'index.html';
-    menu?.querySelectorAll('a.nav-link').forEach(link => {
-      const file = new URL(link.href, location.href).pathname.split('/').pop() || 'index.html';
-      if (file === currentFile) link.setAttribute('aria-current', 'page');
-      else link.removeAttribute('aria-current');
+    // Current-page marker.
+    const currentFile = location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll("#mobile-menu a.nav-link").forEach((link) => {
+      const targetFile = new URL(link.href, location.href).pathname.split("/").pop() || "index.html";
+      if (targetFile === currentFile) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
     });
 
-    const renderTheme = theme => {
-      const dark = theme === 'dark';
-      root.classList.toggle('dark', dark);
-      root.style.colorScheme = dark ? 'dark' : 'light';
-      if (themeIcon) themeIcon.textContent = dark ? '☀' : '☾';
-      if (themeLabel) themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';
-      themeButton?.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
-      themeButton?.setAttribute('aria-pressed', String(dark));
+    // Theme toggle: apply to the document root and persist the user's choice.
+    let savedTheme = null;
+    try { savedTheme = localStorage.getItem("jenny-portfolio-theme"); } catch (_) {}
+    const systemDark = window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    const applyTheme = (theme) => {
+      const isDark = theme === "dark";
+      document.documentElement.classList.toggle("dark", isDark);
+      document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+      if (themeIcon) themeIcon.textContent = isDark ? "☀" : "☾";
+      if (themeLabel) themeLabel.textContent = isDark ? "Light mode" : "Dark mode";
+      if (themeButton) {
+        themeButton.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+        themeButton.setAttribute("aria-pressed", String(isDark));
+      }
     };
-    let saved = null;
-    try { saved = localStorage.getItem('jenny-portfolio-theme'); } catch (_) {}
-    renderTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-    themeButton?.addEventListener('click', event => {
-      event.preventDefault();
-      const next = root.classList.contains('dark') ? 'light' : 'dark';
-      renderTheme(next);
-      try { localStorage.setItem('jenny-portfolio-theme', next); } catch (_) {}
-    });
 
-    const filters = [...document.querySelectorAll('.filter-btn')];
-    const cards = [...document.querySelectorAll('.project-card')];
-    filters.forEach(button => button.addEventListener('click', () => {
-      const category = button.dataset.category || 'all';
-      filters.forEach(item => {
-        const active = item === button;
-        item.classList.toggle('bg-forest', active); item.classList.toggle('text-white', active);
-        item.classList.toggle('bg-white', !active); item.classList.toggle('border', !active);
-        item.classList.toggle('border-line', !active); item.setAttribute('aria-pressed', String(active));
+    applyTheme(savedTheme === "dark" || savedTheme === "light"
+      ? savedTheme : (systemDark ? "dark" : "light"));
+
+    if (themeButton) {
+      themeButton.type = "button";
+      themeButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const nextTheme = document.documentElement.classList.contains("dark") ? "light" : "dark";
+        applyTheme(nextTheme);
+        try { localStorage.setItem("jenny-portfolio-theme", nextTheme); } catch (_) {}
       });
-      cards.forEach(card => { card.hidden = category !== 'all' && card.dataset.category !== category; });
+    }
+
+    // Project filters.
+    const filters = Array.from(document.querySelectorAll(".filter-btn"));
+    const cards = Array.from(document.querySelectorAll(".project-card"));
+    filters.forEach((button) => button.addEventListener("click", () => {
+      const category = button.dataset.category || "all";
+      filters.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle("bg-forest", active);
+        item.classList.toggle("text-white", active);
+        item.classList.toggle("bg-white", !active);
+        item.classList.toggle("border", !active);
+        item.classList.toggle("border-line", !active);
+        item.setAttribute("aria-pressed", String(active));
+      });
+      cards.forEach((card) => {
+        card.hidden = category !== "all" && card.dataset.category !== category;
+      });
     }));
 
-    let top = document.getElementById('back-to-top');
-    if (!top) { top = document.createElement('button'); top.id = 'back-to-top'; top.type = 'button'; top.setAttribute('aria-label', 'Back to top'); top.textContent = '↑'; document.body.appendChild(top); }
-    const updateTop = () => top.classList.toggle('is-visible', window.scrollY > 420);
-    window.addEventListener('scroll', updateTop, { passive: true }); updateTop();
-    top.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    document.querySelectorAll('[data-current-year]').forEach(node => node.textContent = new Date().getFullYear());
+    // Back-to-top.
+    let backToTop = document.getElementById("back-to-top");
+    if (!backToTop) {
+      backToTop = document.createElement("button");
+      backToTop.id = "back-to-top";
+      backToTop.type = "button";
+      backToTop.setAttribute("aria-label", "Back to top");
+      backToTop.title = "Back to top";
+      backToTop.textContent = "↑";
+      document.body.appendChild(backToTop);
+    }
+    const updateBackToTop = () => backToTop.classList.toggle("is-visible", window.scrollY > 420);
+    window.addEventListener("scroll", updateBackToTop, { passive: true });
+    updateBackToTop();
+    backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+    document.querySelectorAll("[data-current-year]").forEach((node) => {
+      node.textContent = new Date().getFullYear();
+    });
   };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true }); else init();
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
 })();
