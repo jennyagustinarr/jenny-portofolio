@@ -20,7 +20,6 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
   background-image:radial-gradient(rgba(29,89,69,.25) .7px,transparent .7px); background-size:22px 22px; }
 a,button,article,.profile-frame,.contact-card { transition:transform .22s ease,box-shadow .22s ease,background-color .25s ease,border-color .25s ease,color .25s ease,opacity .22s ease; }
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible { outline:3px solid #78a886; outline-offset:3px; }
-#mobile-menu a { display:block; }
 .project-card[hidden] { display:none !important; }
 .project-card { min-width:0; }
 .project-card:hover,.contact-card:hover { transform:translateY(-5px); box-shadow:0 18px 45px rgba(20,55,39,.12); border-color:rgba(89,153,115,.55); }
@@ -176,15 +175,6 @@ main section.bg-white:hover, .contact-card:hover {
 html, body { width: 100%; overflow-x: clip; }
 body { -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; }
 header.sticky > div { position: relative; }
-#mobile-toggle {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 44px; min-height: 44px; border-radius: 14px;
-  color: var(--ink); background: var(--surface); font-size: 0;
-  border: 1px solid var(--line); box-shadow: 0 5px 16px rgba(25,65,48,.08);
-}
-#mobile-toggle::before { content: "☰"; font-size: 21px; line-height: 1; }
-#mobile-toggle[aria-expanded="true"]::before { content: "×"; font-size: 28px; }
-#mobile-menu a { min-height: 42px; display: flex; align-items: center; }
 #mobile-menu a[aria-current="page"] { color: var(--forest); font-weight: 800; }
 .nav-link[aria-current="page"]::after { width: 100%; }
 .theme-toggle, #mobile-toggle { touch-action: manipulation; }
@@ -209,16 +199,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
   header.sticky { z-index: 100; }
   header.sticky > div { min-height: 68px; padding-top: 10px; padding-bottom: 10px; gap: 8px; }
   header.sticky > div > a:first-child { font-size: 1rem; max-width: calc(100vw - 180px); overflow: hidden; text-overflow: ellipsis; }
-  #mobile-menu:not(.hidden) {
-    position: absolute; display: flex !important; flex-direction: column; gap: 4px;
-    top: calc(100% + 9px); left: 0; right: 0; z-index: 120;
-    padding: 12px; border: 1px solid var(--line); border-radius: 20px;
-    background: rgba(255,255,255,.97); backdrop-filter: blur(18px);
-    box-shadow: 0 20px 45px rgba(28,65,51,.18);
-  }
-  :root.dark #mobile-menu:not(.hidden) { background: rgba(22,37,30,.98); }
-  #mobile-menu a { padding: 0 14px; border-radius: 12px; font-size: 15px; }
-  #mobile-menu a:hover, #mobile-menu a[aria-current="page"] { background: var(--mint); }
   header .theme-toggle { min-width: 44px; min-height: 44px; padding: 8px 12px; }
   header .theme-toggle #theme-icon { font-size: 18px; }
   main.max-w-6xl, main > section > .max-w-6xl,
@@ -245,8 +225,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 @media (min-width: 768px) and (max-width: 1024px) {
   header.sticky > div { gap: 12px; }
-  #mobile-menu { gap: 14px; }
-  #mobile-menu a { font-size: 13px; }
 }
 @media (hover: none) and (pointer: coarse) {
   a:hover, button:hover { transform: none; }
@@ -257,268 +235,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 
-
-/* Mobile navigation reliability patch (v4.1)
-   Explicit visibility rules avoid depending on Tailwind's hidden/flex utilities. */
-#mobile-toggle {
-  position: relative; z-index: 202; flex: 0 0 44px; cursor: pointer;
-  pointer-events: auto; -webkit-appearance: none; appearance: none;
-}
-#mobile-menu { pointer-events: auto; }
-@media (max-width: 767px) {
-  header.sticky { isolation: isolate; }
-  header.sticky > div { position: relative; }
-  #mobile-menu, #mobile-menu.hidden {
-    display: none !important; visibility: hidden; pointer-events: none;
-  }
-  #mobile-menu.is-open {
-    display: flex !important; visibility: visible; pointer-events: auto;
-    position: absolute; top: calc(100% + 8px); left: 14px; right: 14px;
-    z-index: 201; max-height: min(70vh, 420px); overflow-y: auto;
-    overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
-  }
-  #mobile-menu.is-open a {
-    position: relative; z-index: 1; min-height: 48px; width: 100%;
-    pointer-events: auto; touch-action: manipulation;
-  }
-  #mobile-toggle { touch-action: manipulation; }
-}
-@media (min-width: 768px) {
-  #mobile-toggle { display: none !important; }
-  #mobile-menu, #mobile-menu.hidden {
-    display: flex !important; visibility: visible; pointer-events: auto; position: static;
-  }
-}
-
-
-/* v4.2 — deterministic mobile navigation using the native hidden attribute */
-#mobile-toggle {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 46px;
-  width: 46px;
-  height: 46px;
-  position: relative;
-  z-index: 302;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 27px;
-  line-height: 1;
-  cursor: pointer;
-  touch-action: manipulation;
-  pointer-events: auto;
-  -webkit-appearance: none;
-  appearance: none;
-}
-#mobile-menu[hidden] { display: none !important; }
-#mobile-menu:not([hidden]) { display: flex !important; }
-@media (max-width: 767px) {
-  header.sticky { z-index: 300 !important; }
-  header.sticky > div { position: relative !important; }
-  #mobile-menu:not([hidden]) {
-    position: absolute !important;
-    top: calc(100% + 8px) !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 301 !important;
-    flex-direction: column !important;
-    gap: 4px !important;
-    padding: 12px !important;
-    border: 1px solid var(--line) !important;
-    border-radius: 18px !important;
-    background: #ffffff !important;
-    box-shadow: 0 18px 44px rgba(20, 55, 39, .22) !important;
-    max-height: 70vh;
-    overflow-y: auto;
-    pointer-events: auto !important;
-  }
-  :root.dark #mobile-menu:not([hidden]) {
-    background: #192722 !important;
-  }
-  #mobile-menu a {
-    display: flex !important;
-    align-items: center;
-    width: 100%;
-    min-height: 48px !important;
-    padding: 10px 14px !important;
-    border-radius: 12px;
-    font-size: 16px !important;
-    pointer-events: auto !important;
-    touch-action: manipulation;
-  }
-  #mobile-menu a:active,
-  #mobile-menu a[aria-current="page"] {
-    background: var(--mint) !important;
-  }
-}
-@media (min-width: 768px) {
-  #mobile-toggle { display: none !important; }
-  #mobile-menu:not([hidden]) {
-    position: static !important;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center;
-    gap: 20px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    overflow: visible !important;
-  }
-}
-
-
-/* v4.3 stable navigation + theme controls */
-#mobile-toggle {
-  display: inline-flex !important;
-  align-items: center; justify-content: center;
-  width: 46px; height: 46px; min-width: 46px; min-height: 46px;
-  position: relative; z-index: 500;
-  border: 1px solid var(--line); border-radius: 14px;
-  background: var(--surface); color: var(--ink);
-  font-size: 26px; line-height: 1; cursor: pointer;
-  pointer-events: auto !important; touch-action: manipulation;
-}
-#theme-toggle {
-  position: relative; z-index: 500;
-  min-width: 44px; min-height: 44px;
-  pointer-events: auto !important; touch-action: manipulation;
-}
-#mobile-menu { pointer-events: auto; }
-@media (max-width: 767px) {
-  header.sticky { z-index: 400 !important; }
-  header.sticky > div { position: relative !important; }
-  #mobile-menu { display: none !important; }
-  #mobile-menu.menu-open {
-    display: flex !important; flex-direction: column !important;
-    position: absolute !important; top: calc(100% + 8px) !important;
-    left: 0 !important; right: 0 !important; z-index: 450 !important;
-    gap: 4px !important; padding: 12px !important;
-    border: 1px solid var(--line) !important; border-radius: 18px !important;
-    background: #fff !important; color: #17231f !important;
-    box-shadow: 0 18px 44px rgba(20,55,39,.22) !important;
-    max-height: 70vh; overflow-y: auto;
-  }
-  :root.dark #mobile-menu.menu-open {
-    background: #192722 !important; color: #edf7f1 !important;
-  }
-  #mobile-menu a {
-    display: flex !important; align-items: center;
-    width: 100%; min-height: 48px !important; padding: 10px 14px !important;
-    border-radius: 12px; font-size: 16px !important;
-    pointer-events: auto !important; touch-action: manipulation;
-  }
-  header .theme-toggle { z-index: 500 !important; }
-}
-@media (min-width: 768px) {
-  #mobile-toggle { display: none !important; }
-  #mobile-menu {
-    display: flex !important; position: static !important;
-    flex-direction: row !important; align-items: center;
-    gap: 20px !important; padding: 0 !important;
-    border: 0 !important; background: transparent !important;
-    box-shadow: none !important; overflow: visible !important;
-  }
-}
-
-
-/* v5.0 — consolidated mobile navigation and complete dark theme overrides */
-#mobile-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  min-width: 46px;
-  min-height: 46px;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--surface);
-  color: var(--ink);
-  font: inherit;
-  font-size: 25px;
-  line-height: 1;
-  cursor: pointer;
-  pointer-events: auto;
-  touch-action: manipulation;
-  -webkit-appearance: none;
-  appearance: none;
-}
-#mobile-toggle::before,
-#mobile-toggle::after { content: none !important; display: none !important; }
-#mobile-menu[hidden] { display: none !important; }
-#theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 46px;
-  min-height: 46px;
-  cursor: pointer;
-  pointer-events: auto;
-  touch-action: manipulation;
-}
-@media (max-width: 767px) {
-  header.sticky { z-index: 1000 !important; }
-  header.sticky > div { position: relative !important; }
-  #mobile-menu:not([hidden]) {
-    display: flex !important;
-    position: absolute !important;
-    top: calc(100% + 9px) !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1001 !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 4px !important;
-    padding: 12px !important;
-    border: 1px solid var(--line) !important;
-    border-radius: 18px !important;
-    background: var(--surface) !important;
-    color: var(--ink) !important;
-    box-shadow: 0 18px 44px rgba(20,55,39,.22) !important;
-    max-height: min(70vh, 480px);
-    overflow-y: auto;
-    pointer-events: auto !important;
-    -webkit-overflow-scrolling: touch;
-  }
-  #mobile-menu a {
-    display: flex !important;
-    align-items: center;
-    width: 100%;
-    min-height: 48px !important;
-    padding: 11px 14px !important;
-    border-radius: 12px;
-    color: var(--ink) !important;
-    font-size: 16px !important;
-    pointer-events: auto !important;
-    touch-action: manipulation;
-  }
-  #mobile-menu a:active,
-  #mobile-menu a[aria-current="page"] {
-    background: var(--mint) !important;
-    color: var(--forest) !important;
-  }
-  header .theme-toggle { z-index: 1002 !important; }
-}
-@media (min-width: 768px) {
-  #mobile-toggle { display: none !important; }
-  #mobile-menu {
-    display: flex !important;
-    position: static !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 20px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    overflow: visible !important;
-  }
-}
 
 /* Dark mode: override the fixed light gradients and utility-class colours. */
 :root.dark body {
@@ -573,24 +289,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
   border-color: var(--line) !important;
 }
 
-#mobile-toggle[hidden] { display: none !important; }
-
-/* Final interaction fixes: native hidden state must always win over old menu rules. */
-#mobile-menu[hidden] {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-#mobile-menu:not([hidden]) {
-  visibility: visible;
-  pointer-events: auto;
-}
-#mobile-toggle { position: relative; z-index: 1003; cursor: pointer; }
-@media (max-width: 767px) {
-  #mobile-menu:not([hidden]) { display: flex !important; }
-  #mobile-menu a { position: relative; z-index: 1; cursor: pointer; }
-}
-
 /* Complete dark palette for elements that previously retained light surfaces. */
 :root.dark {
   color-scheme: dark;
@@ -606,79 +304,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 :root.dark .text-gray-800, :root.dark .text-gray-900 { color: #edf7f1 !important; }
 :root.dark .text-slate-700, :root.dark .text-slate-600,
 :root.dark .text-gray-700, :root.dark .text-gray-600 { color: #c5d4cb !important; }
-:root.dark #mobile-menu:not([hidden]) { background: #192722 !important; border-color: var(--line) !important; }
 :root.dark #mobile-menu .nav-link { color: #d6e7dc !important; }
 :root.dark #mobile-menu .nav-link[aria-current="page"] { color: #a5e3c2 !important; background: #254536 !important; }
 
-
-/* v6.1 — single source of truth for mobile menu visibility */
-#mobile-menu[hidden] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-@media (max-width: 767px) {
-  #mobile-toggle { display: inline-flex !important; }
-  #mobile-menu:not([hidden]) {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    position: absolute !important;
-    top: calc(100% + 9px) !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1001 !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    max-height: min(70vh, 480px) !important;
-    overflow-y: auto !important;
-    background: var(--surface) !important;
-    color: var(--ink) !important;
-  }
-  #mobile-menu.is-open { display: flex !important; }
-  #mobile-menu a { min-height: 48px; touch-action: manipulation; }
-  #mobile-toggle, #theme-toggle {
-    position: relative !important;
-    z-index: 1003 !important;
-    pointer-events: auto !important;
-    touch-action: manipulation !important;
-  }
-}
-@media (min-width: 768px) {
-  #mobile-toggle { display: none !important; }
-  #mobile-menu {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    position: static !important;
-    flex-direction: row !important;
-  }
-}
-
-/* Ensure the theme button is always a real, tappable control. */
-#theme-toggle {
-  position: relative !important;
-  z-index: 1004 !important;
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  min-width: 46px;
-  min-height: 46px;
-  cursor: pointer !important;
-  pointer-events: auto !important;
-  touch-action: manipulation !important;
-  -webkit-appearance: none;
-  appearance: none;
-}
-:root.dark body { color: var(--ink) !important; }
-:root.dark #theme-toggle {
-  background: #192722 !important;
-  color: #edf7f1 !important;
-  border-color: #3a5549 !important;
-}
 
 /* v6.2 — final responsive navigation and reliable theme surfaces */
 :root.dark,
@@ -725,30 +353,50 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 :root.dark footer, :root[data-theme="dark"] footer { border-color: var(--line) !important; }
 
-#mobile-menu[hidden] { display: none !important; }
+
+/* v7.0 — single, consistent navigation + theme toggle styling.
+   State is driven only by the `.is-open` class (set by main.js).
+   Without JavaScript the mobile menu stays closed, never stuck open. */
+header.sticky { z-index: 1000; }
+header.sticky > div { position: relative; }
+#mobile-toggle {
+  display: none; align-items: center; justify-content: center;
+  width: 46px; height: 46px; min-width: 46px; padding: 0;
+  border: 1px solid var(--line); border-radius: 14px;
+  background: var(--surface); color: var(--ink);
+  font: inherit; font-size: 25px; line-height: 1;
+  cursor: pointer; touch-action: manipulation;
+  -webkit-appearance: none; appearance: none;
+}
+#mobile-toggle::before, #mobile-toggle::after { content: none !important; }
+#theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 46px; min-height: 46px; cursor: pointer; touch-action: manipulation;
+}
 @media (max-width: 767px) {
-  #mobile-menu:not([hidden]) {
-    display: flex !important;
-    position: absolute !important;
-    top: calc(100% + 9px) !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1001 !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    max-height: min(70vh, 480px) !important;
-    overflow-y: auto !important;
-    padding: 12px !important;
-    border: 1px solid var(--line) !important;
-    border-radius: 18px !important;
-    background: var(--surface) !important;
-    color: var(--ink) !important;
-    box-shadow: 0 18px 44px rgba(20,55,39,.22) !important;
+  #mobile-toggle { display: inline-flex; margin-left: auto; }
+  header.sticky > div { min-height: 68px; gap: 8px; }
+  #mobile-menu { display: none; }
+  #mobile-menu.is-open {
+    display: flex; flex-direction: column; align-items: stretch; gap: 4px;
+    position: absolute; top: calc(100% + 9px); left: 0; right: 0; z-index: 1001;
+    padding: 12px; border: 1px solid var(--line); border-radius: 18px;
+    background: var(--surface); color: var(--ink);
+    box-shadow: 0 18px 44px rgba(20,55,39,.22);
+    max-height: min(70vh, 480px); overflow-y: auto; overscroll-behavior: contain;
   }
-  #mobile-menu[hidden] { display: none !important; }
-  #mobile-toggle { display: inline-flex !important; }
+  #mobile-menu a {
+    display: flex; align-items: center; width: 100%;
+    min-height: 48px; padding: 11px 14px; border-radius: 12px;
+    font-size: 16px; color: var(--ink);
+  }
+  #mobile-menu a::after { display: none; }
+  #mobile-menu a:active, #mobile-menu a[aria-current="page"] { background: var(--mint); color: var(--forest); }
 }
 @media (min-width: 768px) {
-  #mobile-toggle { display: none !important; }
-  #mobile-menu { display: flex !important; position: static !important; }
+  #mobile-toggle { display: none; }
+  #mobile-menu { display: flex; align-items: center; gap: 20px; }
 }
+:root.dark #mobile-menu.is-open { background: var(--surface); }
+:root.dark #mobile-menu .nav-link { color: #d6e7dc; }
+:root.dark #mobile-menu .nav-link[aria-current="page"] { color: #a5e3c2; background: #254536; }

@@ -10,58 +10,55 @@
     const themeLabel = document.getElementById("theme-label");
     const mobileQuery = window.matchMedia("(max-width: 767px)");
 
-    // Mobile navigation: use aria-expanded as the single source of truth.
+    // Mobile navigation: the `.is-open` class + aria-expanded are the single source of truth.
     const setMenuOpen = (open) => {
       if (!menuButton || !mobileMenu) return;
       const shouldOpen = Boolean(open && mobileQuery.matches);
-      mobileMenu.hidden = !shouldOpen;
       mobileMenu.classList.toggle("is-open", shouldOpen);
       menuButton.setAttribute("aria-expanded", String(shouldOpen));
       menuButton.setAttribute("aria-label", shouldOpen ? "Close navigation menu" : "Open navigation menu");
-      menuButton.textContent = shouldOpen ? "×" : "☰";
+      menuButton.textContent = shouldOpen ? "\u00D7" : "\u2630";
     };
+    const isMenuOpen = () => menuButton?.getAttribute("aria-expanded") === "true";
 
     if (menuButton && mobileMenu) {
-      menuButton.type = "button";
+      mobileMenu.removeAttribute("hidden");
       setMenuOpen(false);
+
+      // Toggle with the button (works for both tap and click).
       menuButton.addEventListener("click", (event) => {
         event.preventDefault();
-        event.stopPropagation();
-        const isOpen = menuButton.getAttribute("aria-expanded") === "true";
-        setMenuOpen(!isOpen);
+        setMenuOpen(!isMenuOpen());
       });
 
+      // Close after choosing a link.
       mobileMenu.addEventListener("click", (event) => {
         if (event.target.closest("a")) setMenuOpen(false);
       });
 
+      // Close when tapping anywhere outside the menu.
       document.addEventListener("click", (event) => {
-        if (!mobileQuery.matches || menuButton.getAttribute("aria-expanded") !== "true") return;
-        if (!mobileMenu.contains(event.target) && !menuButton.contains(event.target)) setMenuOpen(false);
+        if (!isMenuOpen()) return;
+        if (mobileMenu.contains(event.target) || menuButton.contains(event.target)) return;
+        setMenuOpen(false);
       });
 
+      // Close with the Escape key.
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
+        if (event.key === "Escape" && isMenuOpen()) {
           setMenuOpen(false);
           menuButton.focus();
         }
       });
 
-      const syncNavigation = () => {
-        if (mobileQuery.matches) {
-          menuButton.hidden = false;
-          setMenuOpen(false);
-        } else {
-          mobileMenu.hidden = false;
-          mobileMenu.classList.remove("is-open");
-          menuButton.setAttribute("aria-expanded", "false");
-          menuButton.hidden = true;
-        }
-      };
-      syncNavigation();
-      window.addEventListener("resize", syncNavigation, { passive: true });
-      if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", syncNavigation);
-      else if (mobileQuery.addListener) mobileQuery.addListener(syncNavigation);
+      // Close when the page is scrolled so the menu never blocks the content.
+      window.addEventListener("scroll", () => { if (isMenuOpen()) setMenuOpen(false); }, { passive: true });
+
+      // Reset when switching between mobile and desktop layouts.
+      // (Not tied to `resize`: mobile browsers fire it when the address bar shows/hides.)
+      const onBreakpointChange = () => setMenuOpen(false);
+      if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", onBreakpointChange);
+      else if (mobileQuery.addListener) mobileQuery.addListener(onBreakpointChange);
     }
 
     // Highlight the current page.

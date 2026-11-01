@@ -18,7 +18,8 @@ Personal portfolio website for Jenny Agustina Rahman, Information Systems studen
 You can also use VS Code Live Server and open `index.html`.
 
 ## CV
-The supplied CV is included at `assets/docs/Jenny_Agustina_Rahman_CV.pdf`.
+All "CV" buttons open the Google Drive link: https://drive.google.com/file/d/1uXABG8Nl6SsYsSGBB4nn2kz0dtkqIqHo/view?usp=sharing
+A copy of the PDF is also kept at `assets/docs/Jenny_Agustina_Rahman_CV.pdf`.
 
 ## Notes
 - The contact form opens the visitor's default email application. It does not store or submit data to a backend.
