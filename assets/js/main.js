@@ -2,6 +2,7 @@
   "use strict";
 
   const init = () => {
+    const root = document.documentElement;
     const menuButton = document.getElementById("mobile-toggle");
     const mobileMenu = document.getElementById("mobile-menu");
     const themeButton = document.getElementById("theme-toggle");
@@ -9,68 +10,60 @@
     const themeLabel = document.getElementById("theme-label");
     const mobileQuery = window.matchMedia("(max-width: 767px)");
 
-    // Reliable responsive navigation: one state source (the hidden property).
-    const syncNavigation = () => {
-      const isMobile = mobileQuery.matches;
-      if (isMobile) {
-        mobileMenu.hidden = true;
-        menuButton.hidden = false;
-      } else {
-        mobileMenu.hidden = false;
-        menuButton.hidden = true;
-      }
-      menuButton.textContent = "☰";
-      menuButton.setAttribute("aria-expanded", "false");
-      menuButton.setAttribute("aria-label", "Open navigation menu");
+    // Navigation: one function controls hidden, class, and accessibility state.
+    const setMenuOpen = (open) => {
+      if (!menuButton || !mobileMenu) return;
+      const shouldOpen = Boolean(open && mobileQuery.matches);
+      mobileMenu.hidden = !shouldOpen;
+      mobileMenu.classList.toggle("is-open", shouldOpen);
+      menuButton.setAttribute("aria-expanded", String(shouldOpen));
+      menuButton.setAttribute("aria-label", shouldOpen ? "Close navigation menu" : "Open navigation menu");
+      menuButton.textContent = shouldOpen ? "×" : "☰";
     };
 
     if (menuButton && mobileMenu) {
       menuButton.type = "button";
+      mobileMenu.hidden = true;
       menuButton.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
-        const willOpen = mobileMenu.hidden;
-        mobileMenu.hidden = !willOpen;
-        menuButton.setAttribute("aria-expanded", String(willOpen));
-        menuButton.setAttribute("aria-label", willOpen ? "Close navigation menu" : "Open navigation menu");
-        menuButton.textContent = willOpen ? "×" : "☰";
+        setMenuOpen(mobileMenu.hidden);
       });
 
-      mobileMenu.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          if (mobileQuery.matches) {
-            mobileMenu.hidden = true;
-            menuButton.setAttribute("aria-expanded", "false");
-            menuButton.setAttribute("aria-label", "Open navigation menu");
-            menuButton.textContent = "☰";
-          }
-        });
+      mobileMenu.addEventListener("click", (event) => {
+        const link = event.target.closest("a");
+        if (link) setMenuOpen(false);
       });
 
       document.addEventListener("click", (event) => {
-        if (mobileQuery.matches && !mobileMenu.hidden &&
-            !mobileMenu.contains(event.target) && !menuButton.contains(event.target)) {
-          mobileMenu.hidden = true;
-          menuButton.setAttribute("aria-expanded", "false");
-          menuButton.setAttribute("aria-label", "Open navigation menu");
-          menuButton.textContent = "☰";
-        }
-      });
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && mobileQuery.matches) {
-          mobileMenu.hidden = true;
-          menuButton.setAttribute("aria-expanded", "false");
-          menuButton.setAttribute("aria-label", "Open navigation menu");
-          menuButton.textContent = "☰";
+        if (!mobileQuery.matches || mobileMenu.hidden) return;
+        if (!mobileMenu.contains(event.target) && !menuButton.contains(event.target)) {
+          setMenuOpen(false);
         }
       });
 
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") setMenuOpen(false);
+      });
+
+      const syncNavigation = () => {
+        if (mobileQuery.matches) {
+          setMenuOpen(false);
+          menuButton.hidden = false;
+        } else {
+          mobileMenu.hidden = false;
+          mobileMenu.classList.remove("is-open");
+          menuButton.setAttribute("aria-expanded", "false");
+          menuButton.hidden = true;
+        }
+      };
       syncNavigation();
       window.addEventListener("resize", syncNavigation, { passive: true });
       if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", syncNavigation);
+      else if (mobileQuery.addListener) mobileQuery.addListener(syncNavigation);
     }
 
-    // Current-page marker.
+    // Highlight the current page.
     const currentFile = location.pathname.split("/").pop() || "index.html";
     document.querySelectorAll("#mobile-menu a.nav-link").forEach((link) => {
       const targetFile = new URL(link.href, location.href).pathname.split("/").pop() || "index.html";
@@ -78,22 +71,23 @@
       else link.removeAttribute("aria-current");
     });
 
-    // Theme toggle: apply to the document root and persist the user's choice.
+    // Theme: initialize from saved preference, then system preference.
     let savedTheme = null;
     try { savedTheme = localStorage.getItem("jenny-portfolio-theme"); } catch (_) {}
     const systemDark = window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches;
 
     const applyTheme = (theme) => {
-      const isDark = theme === "dark";
-      document.documentElement.classList.toggle("dark", isDark);
-      document.documentElement.style.colorScheme = isDark ? "dark" : "light";
-      document.documentElement.dataset.theme = theme;
-      if (themeIcon) themeIcon.textContent = isDark ? "☀" : "☾";
-      if (themeLabel) themeLabel.textContent = isDark ? "Light mode" : "Dark mode";
+      const dark = theme === "dark";
+      root.classList.toggle("dark", dark);
+      root.dataset.theme = dark ? "dark" : "light";
+      root.style.colorScheme = dark ? "dark" : "light";
+      if (themeIcon) themeIcon.textContent = dark ? "☀" : "☾";
+      if (themeLabel) themeLabel.textContent = dark ? "Light mode" : "Dark mode";
       if (themeButton) {
-        themeButton.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
-        themeButton.setAttribute("aria-pressed", String(isDark));
+        themeButton.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+        themeButton.setAttribute("aria-pressed", String(dark));
+        themeButton.title = dark ? "Switch to light mode" : "Switch to dark mode";
       }
     };
 
@@ -105,9 +99,9 @@
       themeButton.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
-        const nextTheme = document.documentElement.classList.contains("dark") ? "light" : "dark";
-        applyTheme(nextTheme);
-        try { localStorage.setItem("jenny-portfolio-theme", nextTheme); } catch (_) {}
+        const next = root.classList.contains("dark") ? "light" : "dark";
+        applyTheme(next);
+        try { localStorage.setItem("jenny-portfolio-theme", next); } catch (_) {}
       });
     }
 
@@ -130,7 +124,7 @@
       });
     }));
 
-    // Back-to-top.
+    // Back-to-top button.
     let backToTop = document.getElementById("back-to-top");
     if (!backToTop) {
       backToTop = document.createElement("button");

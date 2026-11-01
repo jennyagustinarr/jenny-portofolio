@@ -609,3 +609,73 @@ button, a { -webkit-tap-highlight-color: transparent; }
 :root.dark #mobile-menu:not([hidden]) { background: #192722 !important; border-color: var(--line) !important; }
 :root.dark #mobile-menu .nav-link { color: #d6e7dc !important; }
 :root.dark #mobile-menu .nav-link[aria-current="page"] { color: #a5e3c2 !important; background: #254536 !important; }
+
+
+/* v6.1 — single source of truth for mobile menu visibility */
+#mobile-menu[hidden] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+@media (max-width: 767px) {
+  #mobile-toggle { display: inline-flex !important; }
+  #mobile-menu:not([hidden]) {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: absolute !important;
+    top: calc(100% + 9px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1001 !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    max-height: min(70vh, 480px) !important;
+    overflow-y: auto !important;
+    background: var(--surface) !important;
+    color: var(--ink) !important;
+  }
+  #mobile-menu.is-open { display: flex !important; }
+  #mobile-menu a { min-height: 48px; touch-action: manipulation; }
+  #mobile-toggle, #theme-toggle {
+    position: relative !important;
+    z-index: 1003 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+  }
+}
+@media (min-width: 768px) {
+  #mobile-toggle { display: none !important; }
+  #mobile-menu {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: static !important;
+    flex-direction: row !important;
+  }
+}
+
+/* Ensure the theme button is always a real, tappable control. */
+#theme-toggle {
+  position: relative !important;
+  z-index: 1004 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  min-height: 46px;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+:root.dark body { color: var(--ink) !important; }
+:root.dark #theme-toggle {
+  background: #192722 !important;
+  color: #edf7f1 !important;
+  border-color: #3a5549 !important;
+}
