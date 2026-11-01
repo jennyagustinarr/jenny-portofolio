@@ -10,7 +10,7 @@
     const themeLabel = document.getElementById("theme-label");
     const mobileQuery = window.matchMedia("(max-width: 767px)");
 
-    // Navigation: one function controls hidden, class, and accessibility state.
+    // Mobile navigation: use aria-expanded as the single source of truth.
     const setMenuOpen = (open) => {
       if (!menuButton || !mobileMenu) return;
       const shouldOpen = Boolean(open && mobileQuery.matches);
@@ -23,33 +23,34 @@
 
     if (menuButton && mobileMenu) {
       menuButton.type = "button";
-      mobileMenu.hidden = true;
+      setMenuOpen(false);
       menuButton.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
-        setMenuOpen(mobileMenu.hidden);
+        const isOpen = menuButton.getAttribute("aria-expanded") === "true";
+        setMenuOpen(!isOpen);
       });
 
       mobileMenu.addEventListener("click", (event) => {
-        const link = event.target.closest("a");
-        if (link) setMenuOpen(false);
+        if (event.target.closest("a")) setMenuOpen(false);
       });
 
       document.addEventListener("click", (event) => {
-        if (!mobileQuery.matches || mobileMenu.hidden) return;
-        if (!mobileMenu.contains(event.target) && !menuButton.contains(event.target)) {
-          setMenuOpen(false);
-        }
+        if (!mobileQuery.matches || menuButton.getAttribute("aria-expanded") !== "true") return;
+        if (!mobileMenu.contains(event.target) && !menuButton.contains(event.target)) setMenuOpen(false);
       });
 
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") setMenuOpen(false);
+        if (event.key === "Escape") {
+          setMenuOpen(false);
+          menuButton.focus();
+        }
       });
 
       const syncNavigation = () => {
         if (mobileQuery.matches) {
-          setMenuOpen(false);
           menuButton.hidden = false;
+          setMenuOpen(false);
         } else {
           mobileMenu.hidden = false;
           mobileMenu.classList.remove("is-open");
@@ -71,11 +72,10 @@
       else link.removeAttribute("aria-current");
     });
 
-    // Theme: initialize from saved preference, then system preference.
+    // Theme: saved preference wins; otherwise follow the device preference.
     let savedTheme = null;
     try { savedTheme = localStorage.getItem("jenny-portfolio-theme"); } catch (_) {}
-    const systemDark = window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const systemDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
 
     const applyTheme = (theme) => {
       const dark = theme === "dark";
@@ -91,17 +91,15 @@
       }
     };
 
-    applyTheme(savedTheme === "dark" || savedTheme === "light"
-      ? savedTheme : (systemDark ? "dark" : "light"));
+    applyTheme(savedTheme === "dark" || savedTheme === "light" ? savedTheme : (systemDark ? "dark" : "light"));
 
     if (themeButton) {
       themeButton.type = "button";
       themeButton.addEventListener("click", (event) => {
         event.preventDefault();
-        event.stopPropagation();
-        const next = root.classList.contains("dark") ? "light" : "dark";
-        applyTheme(next);
-        try { localStorage.setItem("jenny-portfolio-theme", next); } catch (_) {}
+        const nextTheme = root.classList.contains("dark") ? "light" : "dark";
+        applyTheme(nextTheme);
+        try { localStorage.setItem("jenny-portfolio-theme", nextTheme); } catch (_) {}
       });
     }
 
